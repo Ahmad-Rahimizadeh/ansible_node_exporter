@@ -1,2 +1,2 @@
 [exporter]
-185.14.163.133 ansible_host=185.14.163.133 ansible_user=root
+<host_ip> ansible_host=<your_host_ip> ansible_user=root
