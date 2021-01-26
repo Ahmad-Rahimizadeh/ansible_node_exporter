@@ -1,0 +1,41 @@
+- name: open 9100 port
+    firewalld:
+            zone: public
+            port: 9100/tcp
+            permanent: true
+            state: enabled
+  tags: ["open_port"]
+
+- name: install wget
+  apt:
+      name: wget
+      state: present
+      update_cache: true    
+  tags: ["install_wget"]
+
+- name: check if node_exporter.tar.gz exists
+  stat:
+        path: /root/node_exporter-1.0.0-rc.0.linux-amd64.tar.gz
+  register: stat_result
+  tags: ["check_tarfile"]      
+
+- name: wget and uncompress node_exporter and move it to /usr/local/bin
+  shell: wget https://github.com/prometheus/node_exporter/releases/download/v1.0.0-rc.0/node_exporter-1.0.0-rc.0.linux-amd64.tar.gz && tar -xzf node_exporter-1.0.0-rc.0.linux-amd64.tar.gz && mv node_exporter-1.0.0-rc.0.linux-amd64/node_exporter /usr/local/bin/
+  when: not stat_result.stat.exists
+  tags: ["wget_node_exporter"]
+
+- name: create node_exporter service
+  copy:
+      src: node_exporter.service
+      dest: /etc/systemd/system
+      owner: root
+      group: root
+  tags: ["create_service"]
+
+- name: reload daemon and start node_exporter
+  systemd:
+      daemon_reload: yes
+      state: started
+      enabled: yes
+      name: node_exporter
+  tags: ["daemon_reload"]

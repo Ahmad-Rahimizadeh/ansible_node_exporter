@@ -1,2 +1,0 @@
-[exporter]
-<host_ip> ansible_host=<your_host_ip> ansible_user=root

@@ -1,0 +1,4 @@
+---
+- hosts: exporters
+  role:
+    - ansible_node_exporter
